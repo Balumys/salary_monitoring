@@ -1,21 +1,24 @@
-import os
 import sys
 import requests
-import json
 
 
-def get_vacancies_from_hh(key: str, page: int):
+def get_response_from_hh(language, page_number):
     url = "https://api.hh.ru/vacancies"
+    numeric_params = {
+        "Moscow": 1,
+        "Last month": 30,
+        "Developer_id": 96
+    }
     header = {
         "User-Agent": "API test"
     }
     params = {
-        "text": key,
-        "area": 1,
+        "text": language,
+        "area": numeric_params["Moscow"],
         "per_page": 90,
-        "page": page,
-        "period": 30,
-        "professional_roles": 96,
+        "page": page_number,
+        "period": numeric_params["Last month"],
+        "professional_roles": numeric_params["Developer_id"],
         "only_with_salary": True
     }
     response = requests.get(url, headers=header, params=params)
@@ -35,12 +38,11 @@ def predict_rub_salary(vacancy):
     return salary
 
 
-def calc_statistic_hh(language, all_pages_response):
-    result = {}
+def calc_statistic_hh(language, vacancies):
+    statistic = {}
     salary_per_language = []
-    response = get_vacancies_from_hh(language, 0)
+    response = get_response_from_hh(language, 0)
     vacancies_amount = response.json()["found"]
-    vacancies = all_pages_response
     for vacancy in vacancies:
         if vacancy:
             salary_per_language.append(predict_rub_salary(vacancy))
@@ -48,38 +50,38 @@ def calc_statistic_hh(language, all_pages_response):
             continue
     while None in salary_per_language:
         salary_per_language.remove(None)
-    result[language] = {
+    statistic[language] = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),
         "average_salary": round(sum(salary_per_language) / len(salary_per_language))
     }
-    return result
+    return statistic
 
 
-def get_all_pages_hh(key):
+def get_vacancies_from_all_pages_hh(language):
     page = 0
     pages_number = 19
-    all_pages = []
+    vacancies = []
     while page < pages_number:
-        page_response = get_vacancies_from_hh(key, page)
+        page_response = get_response_from_hh(language, page)
         vacancies_found = page_response.json()["found"]
         page_payload = page_response.json()
-        all_pages.extend(page_payload['items'])
+        vacancies.extend(page_payload['items'])
         pages_number = (vacancies_found // 100) + 1 if (vacancies_found // 100) + 1 < 20 else 20
         page += 1
-    return all_pages
+    return vacancies
 
 
-def get_result_from_hh(programming_languages: list):
-    head_hunter_result = {}
+def get_vacancies_survey_from_hh(programming_languages):
+    hh_vacancies_survey = {}
     try:
         for language in programming_languages:
-            all_pages = get_all_pages_hh(language)
-            head_hunter_result.update(calc_statistic_hh(language, all_pages))
+            vacancies = get_vacancies_from_all_pages_hh(language)
+            hh_vacancies_survey.update(calc_statistic_hh(language, vacancies))
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
-    return head_hunter_result
+    return hh_vacancies_survey
 
 
 if __name__ == "__main__":
-    get_result_from_hh()
+    get_vacancies_survey_from_hh()
