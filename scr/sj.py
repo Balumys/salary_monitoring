@@ -2,7 +2,6 @@ import os
 import sys
 import requests
 import json
-from dotenv import load_dotenv
 
 
 def get_vacancies_from_sj(token, page, key):
@@ -76,7 +75,6 @@ def calc_statistic_sj(token, key, all_pages_response):
 
 
 def get_result_from_sj():
-    load_dotenv()
     token = os.getenv("SUPERJOB_TOKEN")
     programming_languages = json.loads(os.getenv("PROGRAMMING_LANGUAGES"))
     super_job_result = {}

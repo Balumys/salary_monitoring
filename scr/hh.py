@@ -2,7 +2,6 @@ import os
 import sys
 import requests
 import json
-from dotenv import load_dotenv
 
 
 def get_vacancies_from_hh(key: str, page: int):
@@ -72,7 +71,6 @@ def get_all_pages_hh(key):
 
 
 def get_result_from_hh():
-    load_dotenv()
     programming_languages = json.loads(os.getenv("PROGRAMMING_LANGUAGES"))
     head_hunter_result = {}
     try:
