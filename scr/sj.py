@@ -42,13 +42,13 @@ def predict_rub_salary_for_sj(vacancy):
 
 def get_vacancies_from_all_pages_sj(token, language):
     page = 0
-    pages_number = 19
+    pages_number = 1
     vacancies = []
     while page < pages_number:
         page_response = get_vacancies_from_sj(token, page, language)
-        vacancies_found = page_response["total"]
         vacancies.extend(page_response['objects'])
-        pages_number = (vacancies_found // 100) + 1 if (vacancies_found // 100) + 1 < 20 else 20
+        if page_response["more"]:
+            pages_number += 1
         page += 1
     return vacancies
 

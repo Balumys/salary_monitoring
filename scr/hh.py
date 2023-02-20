@@ -67,9 +67,8 @@ def get_vacancies_from_all_pages_hh(language):
     vacancies = []
     while page < pages_number:
         page_response = get_vacancies_from_hh(language, page)
-        vacancies_found = page_response["found"]
         vacancies.extend(page_response['items'])
-        pages_number = (vacancies_found // 100) + 1 if (vacancies_found // 100) + 1 < 20 else 20
+        pages_number = page_response["pages"]
         page += 1
     return vacancies
 
