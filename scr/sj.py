@@ -2,7 +2,7 @@ import sys
 import requests
 
 
-def get_response_from_sj(token, page_number, language):
+def get_vacancies_from_sj(token, page_number, language):
     url = "https://api.superjob.ru/2.0/vacancies/"
     numeric_params = {
         "Developer id": 48,
@@ -21,7 +21,8 @@ def get_response_from_sj(token, page_number, language):
     }
     response = requests.get(url, params=params, headers=header)
     response.raise_for_status()
-    return response
+    vacancies = response.json()
+    return vacancies
 
 
 def predict_rub_salary_for_sj(vacancy):
@@ -44,10 +45,9 @@ def get_vacancies_from_all_pages_sj(token, language):
     pages_number = 19
     vacancies = []
     while page < pages_number:
-        page_response = get_response_from_sj(token, page, language)
-        vacancies_found = page_response.json()["total"]
-        page_payload = page_response.json()
-        vacancies.extend(page_payload['objects'])
+        page_response = get_vacancies_from_sj(token, page, language)
+        vacancies_found = page_response["total"]
+        vacancies.extend(page_response['objects'])
         pages_number = (vacancies_found // 100) + 1 if (vacancies_found // 100) + 1 < 20 else 20
         page += 1
     return vacancies
@@ -56,8 +56,8 @@ def get_vacancies_from_all_pages_sj(token, language):
 def calc_statistic_sj(token, language, vacancies):
     result = {}
     salary_per_language = []
-    response = get_response_from_sj(token, 0, language)
-    vacancies_amount = response.json()["total"]
+    response = get_vacancies_from_sj(token, 0, language)
+    vacancies_amount = response["total"]
     for vacancy in vacancies:
         if vacancy:
             salary_per_language.append(predict_rub_salary_for_sj(vacancy))
