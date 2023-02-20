@@ -28,11 +28,11 @@ def get_vacancies_from_sj(token, page_number, language):
 def predict_rub_salary_for_sj(vacancy):
     if vacancy["currency"] != "rub":
         return None
-    if vacancy["payment_from"] and vacancy["payment_to"] != 0:
+    if vacancy["payment_from"] and vacancy["payment_to"]:
         salary = (vacancy["payment_from"] + vacancy["payment_to"]) / 2
-    elif vacancy["payment_from"] != 0:
+    elif vacancy["payment_from"]:
         salary = vacancy["payment_from"] * 1.2
-    elif vacancy["payment_to"] != 0:
+    elif vacancy["payment_to"]:
         salary = vacancy["payment_to"] * 0.8
     else:
         return None
@@ -54,8 +54,8 @@ def get_vacancies_from_all_pages_sj(token, language):
     return vacancies
 
 
-def calc_statistic_sj(token, language, vacancies):
-    result = {}
+def calc_statistic_sj(vacancies):
+    statistic = {}
     salary_per_language = []
     vacancies_amount = vacancies[-1]
     vacancies.pop()
@@ -69,12 +69,12 @@ def calc_statistic_sj(token, language, vacancies):
         average_salary = round(sum(salary_per_language) / len(salary_per_language))
     except ZeroDivisionError as err:
         sys.exit(err)
-    result[language] = {
+    statistic = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),
         "average_salary": average_salary
     }
-    return result
+    return statistic
 
 
 def get_vacancies_survey_from_sj(programming_languages, token):
@@ -82,7 +82,7 @@ def get_vacancies_survey_from_sj(programming_languages, token):
     try:
         for language in programming_languages:
             vacancies = get_vacancies_from_all_pages_sj(token, language)
-            sj_vacancies_survey.update(calc_statistic_sj(token, language, vacancies))
+            sj_vacancies_survey[language] = calc_statistic_sj(vacancies)
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
     return sj_vacancies_survey

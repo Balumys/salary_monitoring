@@ -44,7 +44,7 @@ def predict_rub_salary(vacancy):
     return salary
 
 
-def calc_statistic_hh(language, vacancies):
+def calc_statistic_hh(vacancies):
     statistic = {}
     salary_per_language = []
     vacancies_amount = vacancies[-1]
@@ -55,11 +55,11 @@ def calc_statistic_hh(language, vacancies):
         salary_per_language.append(predict_rub_salary(vacancy))
     while None in salary_per_language:
         salary_per_language.remove(None)
-        try:
-            average_salary = round(sum(salary_per_language) / len(salary_per_language))
-        except ZeroDivisionError as err:
-            sys.exit(err)
-    statistic[language] = {
+    try:
+        average_salary = round(sum(salary_per_language) / len(salary_per_language))
+    except ZeroDivisionError as err:
+        sys.exit(err)
+    statistic = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),
         "average_salary": average_salary
@@ -86,7 +86,7 @@ def get_vacancies_survey_from_hh(programming_languages):
     try:
         for language in programming_languages:
             vacancies = get_vacancies_from_all_pages_hh(language)
-            hh_vacancies_survey.update(calc_statistic_hh(language, vacancies))
+            hh_vacancies_survey[language] = calc_statistic_hh(vacancies)
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
     return hh_vacancies_survey
