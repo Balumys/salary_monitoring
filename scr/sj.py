@@ -6,7 +6,6 @@ def get_response_from_sj(token, page_number, language):
     url = "https://api.superjob.ru/2.0/vacancies/"
     numeric_params = {
         "Developer id": 48,
-        "Only with salary": 1
     }
     header = {
         "X-Api-App-Id": token
@@ -16,7 +15,6 @@ def get_response_from_sj(token, page_number, language):
         "keyword": language,
         "catalogues": numeric_params["Developer id"],
         "order_field": "date",
-        "no_agreement": numeric_params["Only with salary"],
         "count": 100,
         "page": page_number
 

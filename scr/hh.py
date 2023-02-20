@@ -18,8 +18,7 @@ def get_response_from_hh(language, page_number):
         "per_page": 90,
         "page": page_number,
         "period": numeric_params["Last month"],
-        "professional_roles": numeric_params["Developer_id"],
-        "only_with_salary": True
+        "professional_roles": numeric_params["Developer_id"]
     }
     response = requests.get(url, headers=header, params=params)
     response.raise_for_status()
@@ -28,11 +27,14 @@ def get_response_from_hh(language, page_number):
 
 def predict_rub_salary(vacancy):
     salary_range = vacancy['salary']
-    if vacancy['salary']['currency'] == 'RUR':
-        if salary_range["from"] and salary_range["to"] is not None:
-            salary = (salary_range["from"] + salary_range["to"]) / 2
+    if salary_range is not None:
+        if vacancy['salary']['currency'] == 'RUR':
+            if salary_range["from"] and salary_range["to"] is not None:
+                salary = (salary_range["from"] + salary_range["to"]) / 2
+            else:
+                salary = salary_range["from"] * 1.2 if salary_range["to"] is None else salary_range["to"] * 0.8
         else:
-            salary = salary_range["from"] * 1.2 if salary_range["to"] is None else salary_range["to"] * 0.8
+            salary = None
     else:
         salary = None
     return salary
