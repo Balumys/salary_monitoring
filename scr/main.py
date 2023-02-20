@@ -7,10 +7,11 @@ def get_table_formatting(result):
     header = ["Programming Language", "Vacancies Found", "Vacancies Processed", "Average Salary"]
     table = []
     table.append(header)
-    for key in result.keys():
+    languages = result.keys()
+    for language in languages:
         table.append(
-            [key, str(result[key]["vacancies_found"]), str(result[key]["vacancies_processed"]),
-                 str(result[key]["average_salary"])])
+            [language, str(result[language]["vacancies_found"]), str(result[language]["vacancies_processed"]),
+             str(result[language]["average_salary"])])
     return table
 
 
