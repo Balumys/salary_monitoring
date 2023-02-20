@@ -31,7 +31,9 @@ fetching data from HeadHunter and SuperJob accordingly.
 ### main.py
 Getting result from HeadHunter and SuperJob and print table in terminal.
 
-Example: ``python3 main.py ``
+Example: 
+
+```python3 main.py ```
 ```
 ╔ HeadHunter Result Moscow ══════════════╦═════════════════════╦════════════════╗
 ║ Programming Language ║ Vacancies Found ║ Vacancies Processed ║ Average Salary ║
