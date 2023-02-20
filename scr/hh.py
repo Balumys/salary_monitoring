@@ -28,35 +28,41 @@ def get_vacancies_from_hh(language, page_number):
 
 def predict_rub_salary(vacancy):
     salary_range = vacancy['salary']
-    if salary_range is not None:
-        if vacancy['salary']['currency'] == 'RUR':
-            if salary_range["from"] and salary_range["to"] is not None:
-                salary = (salary_range["from"] + salary_range["to"]) / 2
-            else:
-                salary = salary_range["from"] * 1.2 if salary_range["to"] is None else salary_range["to"] * 0.8
-        else:
-            salary = None
-    else:
-        salary = None
+    if not salary_range:
+        return None
+    if vacancy['salary']['currency'] != 'RUR':
+        return None
+    if not salary_range["from"] and not salary_range["to"]:
+        return None
+    if not salary_range["from"]:
+        salary = salary_range["to"] * 0.8
+        return salary
+    if not salary_range["to"]:
+        salary = salary_range["from"] * 1.2
+        return salary
+    salary = (salary_range["from"] + salary_range["to"]) / 2
     return salary
 
 
 def calc_statistic_hh(language, vacancies):
     statistic = {}
     salary_per_language = []
-    response = get_vacancies_from_hh(language, 0)
-    vacancies_amount = response["found"]
+    vacancies_amount = vacancies[-1]
+    vacancies.pop()
     for vacancy in vacancies:
-        if vacancy:
-            salary_per_language.append(predict_rub_salary(vacancy))
-        else:
+        if not vacancy:
             continue
+        salary_per_language.append(predict_rub_salary(vacancy))
     while None in salary_per_language:
         salary_per_language.remove(None)
+        try:
+            average_salary = round(sum(salary_per_language) / len(salary_per_language))
+        except ZeroDivisionError as err:
+            sys.exit(err)
     statistic[language] = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),
-        "average_salary": round(sum(salary_per_language) / len(salary_per_language))
+        "average_salary": average_salary
     }
     return statistic
 
@@ -70,6 +76,8 @@ def get_vacancies_from_all_pages_hh(language):
         vacancies.extend(page_response['items'])
         pages_number = page_response["pages"]
         page += 1
+    vacancies_amount = page_response["found"]
+    vacancies.append(vacancies_amount)
     return vacancies
 
 

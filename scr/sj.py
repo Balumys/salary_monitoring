@@ -26,15 +26,14 @@ def get_vacancies_from_sj(token, page_number, language):
 
 
 def predict_rub_salary_for_sj(vacancy):
-    if vacancy["currency"] == "rub":
-        if vacancy["payment_from"] and vacancy["payment_to"] != 0:
-            salary = (vacancy["payment_from"] + vacancy["payment_to"]) / 2
-        elif vacancy["payment_from"] != 0:
-            salary = vacancy["payment_from"] * 1.2
-        elif vacancy["payment_to"] != 0:
-            salary = vacancy["payment_to"] * 0.8
-        else:
-            return None
+    if vacancy["currency"] != "rub":
+        return None
+    if vacancy["payment_from"] and vacancy["payment_to"] != 0:
+        salary = (vacancy["payment_from"] + vacancy["payment_to"]) / 2
+    elif vacancy["payment_from"] != 0:
+        salary = vacancy["payment_from"] * 1.2
+    elif vacancy["payment_to"] != 0:
+        salary = vacancy["payment_to"] * 0.8
     else:
         return None
     return int(salary)
@@ -50,25 +49,30 @@ def get_vacancies_from_all_pages_sj(token, language):
         if page_response["more"]:
             pages_number += 1
         page += 1
+    vacancies_amount = page_response["total"]
+    vacancies.append(vacancies_amount)
     return vacancies
 
 
 def calc_statistic_sj(token, language, vacancies):
     result = {}
     salary_per_language = []
-    response = get_vacancies_from_sj(token, 0, language)
-    vacancies_amount = response["total"]
+    vacancies_amount = vacancies[-1]
+    vacancies.pop()
     for vacancy in vacancies:
-        if vacancy:
-            salary_per_language.append(predict_rub_salary_for_sj(vacancy))
-        else:
+        if not vacancy:
             continue
+        salary_per_language.append(predict_rub_salary_for_sj(vacancy))
     while None in salary_per_language:
         salary_per_language.remove(None)
+    try:
+        average_salary = round(sum(salary_per_language) / len(salary_per_language))
+    except ZeroDivisionError as err:
+        sys.exit(err)
     result[language] = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),
-        "average_salary": round(sum(salary_per_language) / len(salary_per_language))
+        "average_salary": average_salary
     }
     return result
 
