@@ -74,9 +74,7 @@ def calc_statistic_sj(token, key, all_pages_response):
     return result
 
 
-def get_result_from_sj():
-    token = os.getenv("SUPERJOB_TOKEN")
-    programming_languages = json.loads(os.getenv("PROGRAMMING_LANGUAGES"))
+def get_result_from_sj(programming_languages, token):
     super_job_result = {}
     try:
         for language in programming_languages:

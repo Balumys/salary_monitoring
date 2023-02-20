@@ -2,6 +2,8 @@ from hh import get_result_from_hh
 from sj import get_result_from_sj
 from terminaltables import DoubleTable
 from dotenv import load_dotenv
+import json
+import os
 
 
 def get_table_formatting(result):
@@ -18,8 +20,10 @@ def get_table_formatting(result):
 
 if __name__ == "__main__":
     load_dotenv()
-    hh_result = get_result_from_hh()
-    sj_result = get_result_from_sj()
+    programming_languages = json.loads(os.getenv("PROGRAMMING_LANGUAGES"))
+    token = os.getenv("SUPERJOB_TOKEN")
+    hh_result = get_result_from_hh(programming_languages)
+    sj_result = get_result_from_sj(programming_languages, token)
     table_instance_hh = DoubleTable(get_table_formatting(hh_result), " HeadHunter Result Moscow ")
     print(table_instance_hh.table)
     print()

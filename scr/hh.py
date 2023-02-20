@@ -70,8 +70,7 @@ def get_all_pages_hh(key):
     return all_pages
 
 
-def get_result_from_hh():
-    programming_languages = json.loads(os.getenv("PROGRAMMING_LANGUAGES"))
+def get_result_from_hh(programming_languages: list):
     head_hunter_result = {}
     try:
         for language in programming_languages:
