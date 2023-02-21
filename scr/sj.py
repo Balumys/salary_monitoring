@@ -1,5 +1,6 @@
 import sys
 import requests
+from average_salary import calc_average_salary
 
 
 def get_vacancies_from_sj(token, page_number, language):
@@ -26,17 +27,13 @@ def get_vacancies_from_sj(token, page_number, language):
 
 
 def predict_rub_salary_for_sj(vacancy):
+    salary_from = vacancy["payment_from"]
+    salary_to = vacancy["payment_to"]
+    if not salary_from and not salary_to:
+        return None
     if vacancy["currency"] != "rub":
         return None
-    if vacancy["payment_from"] and vacancy["payment_to"]:
-        salary = (vacancy["payment_from"] + vacancy["payment_to"]) / 2
-    elif vacancy["payment_from"]:
-        salary = vacancy["payment_from"] * 1.2
-    elif vacancy["payment_to"]:
-        salary = vacancy["payment_to"] * 0.8
-    else:
-        return None
-    return int(salary)
+    return calc_average_salary(salary_from, salary_to)
 
 
 def get_vacancies_from_all_pages_sj(token, language):

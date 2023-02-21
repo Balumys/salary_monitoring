@@ -1,5 +1,6 @@
 import sys
 import requests
+from average_salary import calc_average_salary
 
 
 def get_vacancies_from_hh(language, page_number):
@@ -32,16 +33,9 @@ def predict_rub_salary(vacancy):
         return None
     if vacancy['salary']['currency'] != 'RUR':
         return None
-    if not salary_range["from"] and not salary_range["to"]:
-        return None
-    if not salary_range["from"]:
-        salary = salary_range["to"] * 0.8
-        return salary
-    if not salary_range["to"]:
-        salary = salary_range["from"] * 1.2
-        return salary
-    salary = (salary_range["from"] + salary_range["to"]) / 2
-    return salary
+    salary_from = salary_range["from"]
+    salary_to = salary_range["to"]
+    return calc_average_salary(salary_from, salary_to)
 
 
 def calc_statistic_hh(vacancies):

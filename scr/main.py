@@ -13,7 +13,8 @@ def get_table_formatting(vacancies_survey):
     languages = vacancies_survey.keys()
     for language in languages:
         table.append(
-            [language, str(vacancies_survey[language]["vacancies_found"]), str(vacancies_survey[language]["vacancies_processed"]),
+            [language, str(vacancies_survey[language]["vacancies_found"]),
+             str(vacancies_survey[language]["vacancies_processed"]),
              str(vacancies_survey[language]["average_salary"])])
     return table
 
