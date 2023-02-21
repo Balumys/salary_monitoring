@@ -26,7 +26,7 @@ if __name__ == "__main__":
     hh_survey = get_vacancies_survey_from_hh(programming_languages)
     sj_survey = get_vacancies_survey_from_sj(programming_languages, token)
     table_instance_hh = DoubleTable(get_table_formatting(hh_survey), " HeadHunter Result Moscow ")
+    table_instance_sj = DoubleTable(get_table_formatting(sj_survey), " SuperJob Result Moscow ")
     print(table_instance_hh.table)
     print()
-    table_instance_sj = DoubleTable(get_table_formatting(sj_survey), " SuperJob Result Moscow ")
     print(table_instance_sj.table)

@@ -1,20 +1,18 @@
 import sys
 import requests
 from average_salary import calc_average_salary
+from Numeric_params import ParametersSJ
 
 
 def get_vacancies_from_sj(token, page_number, language):
     url = "https://api.superjob.ru/2.0/vacancies/"
-    numeric_params = {
-        "Developer id": 48,
-    }
     header = {
         "X-Api-App-Id": token
     }
     params = {
         "town": "Москва",
         "keyword": language,
-        "catalogues": numeric_params["Developer id"],
+        "catalogues": ParametersSJ.DeveloperID.value,
         "order_field": "date",
         "count": 100,
         "page": page_number
@@ -59,13 +57,16 @@ def calc_statistic_sj(vacancies):
     for vacancy in vacancies:
         if not vacancy:
             continue
-        salary_per_language.append(predict_rub_salary_for_sj(vacancy))
+        predict_salary = predict_rub_salary_for_sj(vacancy)
+        if not predict_salary:
+            continue
+        salary_per_language.append(predict_salary)
     while None in salary_per_language:
         salary_per_language.remove(None)
     try:
         average_salary = round(sum(salary_per_language) / len(salary_per_language))
-    except ZeroDivisionError as err:
-        sys.exit(err)
+    except ZeroDivisionError:
+        average_salary = 0
     statistic = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),

@@ -1,25 +1,23 @@
 import sys
+import time
+
 import requests
 from average_salary import calc_average_salary
+from Numeric_params import ParametersHH
 
 
 def get_vacancies_from_hh(language, page_number):
     url = "https://api.hh.ru/vacancies"
-    numeric_params = {
-        "Moscow": 1,
-        "Last month": 30,
-        "Developer_id": 96
-    }
     header = {
         "User-Agent": "API test"
     }
     params = {
         "text": language,
-        "area": numeric_params["Moscow"],
+        "area": ParametersHH.Moscow.value,
         "per_page": 90,
         "page": page_number,
-        "period": numeric_params["Last month"],
-        "professional_roles": numeric_params["Developer_id"]
+        "period": ParametersHH.LastMont.value,
+        "professional_roles": ParametersHH.DeveloperID.value
     }
     response = requests.get(url, headers=header, params=params)
     response.raise_for_status()
@@ -46,13 +44,16 @@ def calc_statistic_hh(vacancies):
     for vacancy in vacancies:
         if not vacancy:
             continue
-        salary_per_language.append(predict_rub_salary(vacancy))
+        predict_salary = predict_rub_salary(vacancy)
+        if not predict_salary:
+            continue
+        salary_per_language.append(predict_salary)
     while None in salary_per_language:
         salary_per_language.remove(None)
     try:
         average_salary = round(sum(salary_per_language) / len(salary_per_language))
-    except ZeroDivisionError as err:
-        sys.exit(err)
+    except ZeroDivisionError:
+        average_salary = 0
     statistic = {
         "vacancies_found": vacancies_amount,
         "vacancies_processed": len(salary_per_language),
