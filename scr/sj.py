@@ -61,8 +61,6 @@ def calc_statistic_sj(vacancies):
         if not predict_salary:
             continue
         salary_per_language.append(predict_salary)
-    while None in salary_per_language:
-        salary_per_language.remove(None)
     try:
         average_salary = round(sum(salary_per_language) / len(salary_per_language))
     except ZeroDivisionError:
