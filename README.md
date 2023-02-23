@@ -68,7 +68,10 @@ language.
 #### sj.py
 Contain functions to get data from [SuperJob API](https://api.superjob.ru/register) and calculating average salary per programming
 language.
-
+#### average_salary.py
+Contain just one function to calculate average salary.
+#### Numeric_params.py
+Contain settings for requests.
 ## Project Goals
 
 The code is written for educational purposes on online-course for web-developers [dvmn.org](https://dvmn.org/).
