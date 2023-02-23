@@ -7,15 +7,23 @@ import os
 
 
 def get_table_formatting(vacancies_survey):
-    header = ["Programming Language", "Vacancies Found", "Vacancies Processed", "Average Salary"]
+    header = [
+        "Programming Language",
+        "Vacancies Found",
+        "Vacancies Processed",
+        "Average Salary"
+    ]
     table = []
     table.append(header)
-    languages = vacancies_survey.keys()
-    for language in languages:
+    for language, statistic in vacancies_survey.items():
         table.append(
-            [language, str(vacancies_survey[language]["vacancies_found"]),
-             str(vacancies_survey[language]["vacancies_processed"]),
-             str(vacancies_survey[language]["average_salary"])])
+            [
+                language,
+                str(statistic["vacancies_found"]),
+                str(statistic["vacancies_processed"]),
+                str(statistic["average_salary"])
+            ]
+        )
     return table
 
 
@@ -25,8 +33,10 @@ if __name__ == "__main__":
     token = os.getenv("SUPERJOB_TOKEN")
     hh_survey = get_vacancies_survey_from_hh(programming_languages)
     sj_survey = get_vacancies_survey_from_sj(programming_languages, token)
-    table_instance_hh = DoubleTable(get_table_formatting(hh_survey), " HeadHunter Result Moscow ")
-    table_instance_sj = DoubleTable(get_table_formatting(sj_survey), " SuperJob Result Moscow ")
+    table_instance_hh = DoubleTable(get_table_formatting(hh_survey),
+                                    " HeadHunter Result Moscow ")
+    table_instance_sj = DoubleTable(get_table_formatting(sj_survey),
+                                    " SuperJob Result Moscow ")
     print(table_instance_hh.table)
     print()
     print(table_instance_sj.table)
