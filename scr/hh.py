@@ -35,11 +35,11 @@ def predict_rub_salary(vacancy):
     return calc_average_salary(salary_from, salary_to)
 
 
-def calc_statistic_hh(vacancies):
+def calc_statistic_hh(vacancies_info):
     statistic = {}
     salaries_per_language = []
-    vacancies_amount = vacancies[-1]
-    vacancies.pop()
+    vacancies_amount = vacancies_info["vacancies_amount"]
+    vacancies = vacancies_info["vacancies"]
     for vacancy in vacancies:
         if not vacancy:
             continue
@@ -59,9 +59,10 @@ def calc_statistic_hh(vacancies):
     return statistic
 
 
-def get_vacancies_from_all_pages_hh(language):
+def get_info_from_all_pages_hh(language) -> dict:
     page = 0
     pages_number = 19
+    vacancies_info = dict()
     vacancies = []
     while page < pages_number:
         page_response = get_vacancies_from_hh(language, page)
@@ -69,16 +70,17 @@ def get_vacancies_from_all_pages_hh(language):
         pages_number = page_response["pages"]
         page += 1
     vacancies_amount = page_response["found"]
-    vacancies.append(vacancies_amount)
-    return vacancies
+    vacancies_info["vacancies"] = vacancies
+    vacancies_info["vacancies_amount"] = vacancies_amount
+    return vacancies_info
 
 
 def get_vacancies_survey_from_hh(programming_languages):
     hh_vacancies_survey = {}
     try:
         for language in programming_languages:
-            vacancies = get_vacancies_from_all_pages_hh(language)
-            hh_vacancies_survey[language] = calc_statistic_hh(vacancies)
+            vacancies_info = get_info_from_all_pages_hh(language)
+            hh_vacancies_survey[language] = calc_statistic_hh(vacancies_info)
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
     return hh_vacancies_survey
