@@ -51,7 +51,7 @@ def get_vacancies_from_all_pages_sj(token, language):
 
 def calc_statistic_sj(vacancies):
     statistic = {}
-    salary_per_language = []
+    salaries_per_language = []
     vacancies_amount = vacancies[-1]
     vacancies.pop()
     for vacancy in vacancies:
@@ -60,14 +60,14 @@ def calc_statistic_sj(vacancies):
         predict_salary = predict_rub_salary_for_sj(vacancy)
         if not predict_salary:
             continue
-        salary_per_language.append(predict_salary)
+        salaries_per_language.append(predict_salary)
     try:
-        average_salary = round(sum(salary_per_language) / len(salary_per_language))
+        average_salary = round(sum(salaries_per_language) / len(salaries_per_language))
     except ZeroDivisionError:
         average_salary = 0
     statistic = {
         "vacancies_found": vacancies_amount,
-        "vacancies_processed": len(salary_per_language),
+        "vacancies_processed": len(salaries_per_language),
         "average_salary": average_salary
     }
     return statistic
