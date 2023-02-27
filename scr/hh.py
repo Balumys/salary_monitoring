@@ -1,5 +1,3 @@
-import sys
-
 import requests
 from average_salary import calc_average_salary
 from Numeric_params import ParametersHH
@@ -77,12 +75,9 @@ def get_vacancies_from_all_pages_hh(language) -> dict:
 
 def get_vacancies_survey_from_hh(programming_languages):
     hh_vacancies_survey = {}
-    try:
-        for language in programming_languages:
-            vacancies_info = get_vacancies_from_all_pages_hh(language)
-            hh_vacancies_survey[language] = calc_statistic_hh(vacancies_info)
-    except requests.exceptions.HTTPError as err:
-        sys.exit(err)
+    for language in programming_languages:
+        vacancies_info = get_vacancies_from_all_pages_hh(language)
+        hh_vacancies_survey[language] = calc_statistic_hh(vacancies_info)
     return hh_vacancies_survey
 
 

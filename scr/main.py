@@ -4,6 +4,8 @@ from terminaltables import DoubleTable
 from dotenv import load_dotenv
 import json
 import os
+import requests
+import sys
 
 
 def get_table_formatting(vacancies_survey):
@@ -31,8 +33,11 @@ if __name__ == "__main__":
     load_dotenv()
     programming_languages = json.loads(os.getenv("PROGRAMMING_LANGUAGES"))
     token = os.getenv("SUPERJOB_TOKEN")
-    hh_survey = get_vacancies_survey_from_hh(programming_languages)
-    sj_survey = get_vacancies_survey_from_sj(programming_languages, token)
+    try:
+        hh_survey = get_vacancies_survey_from_hh(programming_languages)
+        sj_survey = get_vacancies_survey_from_sj(programming_languages, token)
+    except requests.exceptions.HTTPError as err:
+        sys.exit(err)
     table_instance_hh = DoubleTable(get_table_formatting(hh_survey),
                                     " HeadHunter Result Moscow ")
     table_instance_sj = DoubleTable(get_table_formatting(sj_survey),

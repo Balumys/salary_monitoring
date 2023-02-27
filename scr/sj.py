@@ -1,4 +1,3 @@
-import sys
 import requests
 from average_salary import calc_average_salary
 from Numeric_params import ParametersSJ
@@ -77,12 +76,9 @@ def calc_statistic_sj(vacancies_info):
 
 def get_vacancies_survey_from_sj(programming_languages, token):
     sj_vacancies_survey = {}
-    try:
-        for language in programming_languages:
-            vacancies_info = get_vacancies_from_all_pages_sj(token, language)
-            sj_vacancies_survey[language] = calc_statistic_sj(vacancies_info)
-    except requests.exceptions.HTTPError as err:
-        sys.exit(err)
+    for language in programming_languages:
+        vacancies_info = get_vacancies_from_all_pages_sj(token, language)
+        sj_vacancies_survey[language] = calc_statistic_sj(vacancies_info)
     return sj_vacancies_survey
 
 
