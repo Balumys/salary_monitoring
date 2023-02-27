@@ -59,10 +59,10 @@ def calc_statistic_hh(vacancies_info):
     return statistic
 
 
-def get_info_from_all_pages_hh(language) -> dict:
+def get_vacancies_from_all_pages_hh(language) -> dict:
     page = 0
     pages_number = 19
-    vacancies_info = dict()
+    vacancies_hh = dict()
     vacancies = []
     while page < pages_number:
         page_response = get_vacancies_from_hh(language, page)
@@ -70,16 +70,16 @@ def get_info_from_all_pages_hh(language) -> dict:
         pages_number = page_response["pages"]
         page += 1
     vacancies_amount = page_response["found"]
-    vacancies_info["vacancies"] = vacancies
-    vacancies_info["vacancies_amount"] = vacancies_amount
-    return vacancies_info
+    vacancies_hh["vacancies"] = vacancies
+    vacancies_hh["vacancies_amount"] = vacancies_amount
+    return vacancies_hh
 
 
 def get_vacancies_survey_from_hh(programming_languages):
     hh_vacancies_survey = {}
     try:
         for language in programming_languages:
-            vacancies_info = get_info_from_all_pages_hh(language)
+            vacancies_info = get_vacancies_from_all_pages_hh(language)
             hh_vacancies_survey[language] = calc_statistic_hh(vacancies_info)
     except requests.exceptions.HTTPError as err:
         sys.exit(err)

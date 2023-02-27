@@ -34,10 +34,10 @@ def predict_rub_salary_for_sj(vacancy):
     return calc_average_salary(salary_from, salary_to)
 
 
-def get_info_from_all_pages_sj(token, language) -> dict:
+def get_vacancies_from_all_pages_sj(token, language) -> dict:
     page = 0
     pages_number = 1
-    vacancies_info = dict()
+    vacancies_sj = dict()
     vacancies = []
     while page < pages_number:
         page_response = get_vacancies_from_sj(token, page, language)
@@ -46,9 +46,9 @@ def get_info_from_all_pages_sj(token, language) -> dict:
             pages_number += 1
         page += 1
     vacancies_amount = page_response["total"]
-    vacancies_info["vacancies"] = vacancies
-    vacancies_info["vacancies_amount"] = vacancies_amount
-    return vacancies_info
+    vacancies_sj["vacancies"] = vacancies
+    vacancies_sj["vacancies_amount"] = vacancies_amount
+    return vacancies_sj
 
 
 def calc_statistic_sj(vacancies_info):
@@ -79,7 +79,7 @@ def get_vacancies_survey_from_sj(programming_languages, token):
     sj_vacancies_survey = {}
     try:
         for language in programming_languages:
-            vacancies_info = get_info_from_all_pages_sj(token, language)
+            vacancies_info = get_vacancies_from_all_pages_sj(token, language)
             sj_vacancies_survey[language] = calc_statistic_sj(vacancies_info)
     except requests.exceptions.HTTPError as err:
         sys.exit(err)
